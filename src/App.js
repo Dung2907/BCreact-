@@ -1,24 +1,42 @@
 import logo from './logo.svg';
 import './App.css';
-
+import Index from './frontend/index';
+import {BrowserRouter as BrowserRouter, Routes, Route } from "react-router-dom";
+import FrontendRoute from './route/frontend';
+import { UserProvider } from './frontend/context/userContext';
+import store from './redux/store';
+import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import IndexAdmin from './backend';
+import BackendRoute from './route/backend';
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <UserProvider>
+        <BrowserRouter>
+          <ToastContainer />
+            <Routes>
+              <Route path="/"element={<Index />}>
+              {
+                FrontendRoute.map((router, index) => {
+                  const Page = router.component;
+                  return <Route key={index}path={router.path} element={<Page />} />
+                })
+              }
+              </Route>
+                {/* backend */}
+              <Route path="/admin"element={<IndexAdmin />}>
+              {
+                  BackendRoute.map((router, index) => {
+                  const Page = router.component;
+                  return <Route key={index}path={router.path} element={<Page />} />
+                })
+              }
+              </Route>
+            </Routes>
+        </BrowserRouter>
+      </UserProvider>
+    </Provider>
   );
 }
 
